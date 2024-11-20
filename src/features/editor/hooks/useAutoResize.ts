@@ -27,8 +27,11 @@ const useAutoResize = ({ canvasWrapper, canvas }: UseAutoResizeProps): void => {
 
         // Finding the workspace object inside the canvas using its name 'defaultCanvasWorkspace'
         const workspace = canvas.getObjects().find((obj) => obj.name === "defaultCanvasWorkspace");
+        // If no workspace is found, return early
+        if (!workspace) return;
 
-        // @ts-expect-error: findScaleToFit is not typed correctly in fabric.js
+        // Calculate the scale needed to fit the workspace within the canvas dimensions
+        // @ts-expect-error: findScaleToFit is not in the TypeScript definitions
         const scale = fabric.util.findScaleToFit(workspace, {
             width: offsetWidth, // Width of the canvas wrapper
             height: offsetHeight, // Height of the canvas wrapper
