@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'; // Importing React hooks: useCallback and useState
-import * as fabric from 'fabric'; // Importing the 'fabric' library for canvas manipulation
+import {fabric} from 'fabric'; // Importing the 'fabric' library for canvas manipulation
 import { useAutoResize } from './useAutoResize'; // Importing the custom hook for auto-resizing the canvas
 
 // Main custom hook: useEditor
@@ -29,7 +29,7 @@ const useEditor = () => {
       console.log('initializing Editor... '); // Log to indicate the initialization process
 
       // Set default properties for all objects (shapes, text, etc.) created on the canvas
-      fabric.Object.prototype.set({
+      window.fabric.Object.prototype.set({
         cornerColor: '#FFF', // The color of control corners
         cornerStyle: 'circle', // Style of the corners (circle or square)
         borderColor: '#8b3dff', // The color of the object's border

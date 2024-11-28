@@ -1,4 +1,4 @@
-import * as fabric from 'fabric'; // Importing the entire 'fabric' library for working with the canvas
+import {fabric} from 'fabric'; // Importing the entire 'fabric' library for working with the canvas
 import { useCallback, useEffect } from 'react'; // Importing React hooks: useCallback and useEffect
 
 // Defining the types for the props passed into the hook

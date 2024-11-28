@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'; // Importing React and specific hooks (useEffect and useRef)
 import { useEditor } from '../hooks/useEditor'; // Importing the custom useEditor hook
-import * as fabric from 'fabric'; // Importing the Fabric.js library for working with the canvas
+import {fabric} from 'fabric'; // Importing the Fabric.js library for working with the canvas
 
 // Editor component definition
 const Editor = () => {
