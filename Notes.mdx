@@ -1,4 +1,4 @@
-## CanvasPro AI - Notes
+## Designr - Notes
 
 - Similar editor for inspiration:
   - https://github.com/ikuaitu/vue-fabric-editor built on vue
@@ -16,7 +16,7 @@
 ### 2. Understanding the NextJS project structure
 
 - https://nextjs.org/docs/getting-started/project-structure
-- avoid middleware.ts if possible because it runs only on edge but we want to be able to deploy our app to any server
+- avoid middleware.ts if possible because it runs only on edge but i want to be able to deploy my app to any server
 - Route Groups:
   - https://nextjs.org/docs/app/building-your-application/routing/route-groups
 - Private folders:
@@ -29,8 +29,8 @@
 - http://fabricjs.com/docs/
 - https://github.com/Automattic/node-canvas#compiling
 - Create Editor page, component and useEditor.ts hook
-- why we use canvasContainerRef
-  - Canvas resizing is difficult hence we are using a div as canvasContainerRef and we will use a resize observer to see if canvasContainerRef is resized and use the width and height from there to set width and height of canvas
+- why i use canvasContainerRef
+  - Canvas resizing is difficult hence i am using a div as canvasContainerRef and i will use a resize observer to see if canvasContainerRef is resized and use the width and height from there to set width and height of canvas
 - `npm install fabric@5.3.0-browser --save` and `npm install -D @types/fabric@5.3.0`
   - the browser version is important because it is the only version that will not use node-canvas as dependency
 
@@ -92,7 +92,7 @@
 
 ### 25. Font style - normal, italic
 
-### 26. Underline, linethough, uppercase
+### 26. Underline, linethrough, uppercase
 
 ### 27. Text alignment - left, center, right, justify
 
@@ -109,7 +109,7 @@
   - It's fast
   - It integrates well with NextJS
   - Runs on several runtime environments
-  - we will learn more about RPC routes
+  - i will learn more about RPC routes
 
 ## Day 6
 
@@ -119,7 +119,7 @@
 - https://hono.dev/docs/guides/best-practices
 - https://hono.dev/docs/guides/best-practices#building-a-larger-application
 - https://hono.dev/docs/guides/validation
-  - hono has thin minimial validation. so use a third party library for validation like zod
+  - hono has thin minimal validation. so use a third party library for validation like zod
 - https://hono.dev/docs/guides/rpc
   - don't forget to chain your rpc routes
     - https://hono.dev/docs/guides/rpc#using-rpc-with-larger-applications
@@ -131,7 +131,7 @@
 - create unsplash dev account for third party images
   - https://unsplash.com/developers
 
-### 32. Use Bytescale to upload files for our project
+### 32. Use Bytescale to upload files for my project
 
 ### 33. Image Filter
 
@@ -166,8 +166,8 @@
 
 ### 44. Auth setup with Auth.js
 
-- Note: NextAuth v4 is now called as Auth.js which is v5 so make sure you are on the correct website
-- https://authjs.dev/ ✅ v5 - we will be using this
+- Note: NextAuth v4 is now called as Auth.js which is v5 so make sure i am on the correct website
+- https://authjs.dev/ ✅ v5 - i will be using this
 - https://next-auth.js.org/ ❌ v4
 
 - 1. Setup:
@@ -199,20 +199,20 @@
 ### 47. Credentials Auth with Auth.js
 
 - https://authjs.dev/getting-started/authentication/credentials
-- For google and github we have used db session strategy but for credentials we will use jwt strategy
+- For google and github i have used db session strategy but for credentials i will use jwt strategy
 - db session strategy will create sessions with user id while jwt strategy sessions will not have an id. In order to add id follow this: https://authjs.dev/guides/extending-the-session
 - make sure to add password to the user schema so that it is saved in db.
 - `npm run db:generate`
 - `npm run db:migrate`
 - `npm run db:studio`
 
-- Note: Better to avoid credentials provider and stick to OAuth providers, magic link etc. And if that's the case, then we can use the db session strategy for all providers and get rid of jwt strategy
+- Note: Better to avoid credentials provider and stick to OAuth providers, magic link etc. And if that's the case, then i can use the db session strategy for all providers and get rid of jwt strategy
 
 ## Day 9
 
 ### 48. Adding auth for hono API
 
-- create a test.ts route to make it protected route
+- create a test.ts route to make it a protected route
 - https://hono.dev/docs/middleware/third-party
 - https://github.com/honojs/middleware/tree/main/packages/auth-js
 - `npm i @hono/auth-js @auth/core`
@@ -261,10 +261,12 @@
 - https://dashboard.stripe.com/test/workbench/webhooks
 - https://docs.stripe.com/stripe-cli
 - https://docs.stripe.com/webhooks#test-webhook
-- `stripe listen --forward-to localhost:3000/api/subscriptions/webhook` - pls do not close this for the testing purpose
+- `stripe listen --forward-to localhost:3000/api/subscriptions/webhook` - please do not close this for testing purposes
 - `stripe trigger payment_intent.succeeded`
 - test card: 4242 4242 4242 4242
 - Make customer portal for test active: https://dashboard.stripe.com/test/settings/billing/portal
 - Create a webhook endpoint for prod
 
-- Note: We are not using Image tag from next js beause I am currently using the free tier which has limit on the image optimization. If you have a paid plan then you can use the Image tag from next js which is recommended
+- Note: I am not using the Image tag from Next.js because I am currently using the free tier which has a limit on image optimization. If i have a paid plan then i can use the Image tag from Next.js which is recommended
+
+---
