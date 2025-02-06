@@ -1,4 +1,4 @@
-import EditorPage from "@/app/design/[projectId]/edit/editor-page";
+import EditorPage from "@/app/design/[projectid]/edit/editor-page";
 import { protectRoute } from "@/features/auth/utils";
 
 type Props = {
