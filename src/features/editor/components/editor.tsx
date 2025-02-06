@@ -1,54 +1,193 @@
-"use client"; // This directive tells Next.js that this component should be rendered on the client side.
+"use client";
 
-import React, { useEffect, useRef } from 'react'; // Importing React and specific hooks (useEffect and useRef)
-import { useEditor } from '../hooks/useEditor'; // Importing the custom useEditor hook
-import {fabric} from 'fabric'; // Importing the Fabric.js library for working with the canvas
+import AISidebar from "@/features/editor/components/ai-sidebar";
+import BorderColorSidebar from "@/features/editor/components/border-color-sidebar";
+import BorderSidebar from "@/features/editor/components/border-sidebar";
+import ColorSidebar from "@/features/editor/components/color-sidebar";
+import DrawSidebar from "@/features/editor/components/draw-sidebar";
+import EditImageSidebar from "@/features/editor/components/edit-image-sidebar";
+import ElementsSidebar from "@/features/editor/components/elements-sidebar";
+import FontSidebar from "@/features/editor/components/font-sidebar";
+import Footer from "@/features/editor/components/footer";
+import Navbar from "@/features/editor/components/navbar";
+import Sidebar from "@/features/editor/components/sidebar";
+import TextSidebar from "@/features/editor/components/text-sidebar";
+import Toolbar from "@/features/editor/components/toolbar";
+import TransparencySidebar from "@/features/editor/components/transparency-sidebar";
+import UploadsSidebar from "@/features/editor/components/uploads-sidebar";
+import WorkspaceBackgroundColorSidebar from "@/features/editor/components/workspace-color-sidebar";
+import { selectionOnlyTools } from "@/features/editor/constants";
+import { useEditor } from "@/features/editor/hooks/useEditor";
+import { SelectedTool } from "@/features/editor/types";
+import { FetchProjectResponseType } from "@/features/projects/api/use-fetch-project";
+import { usePatchProject } from "@/features/projects/api/use-patch-project";
+import { fabric } from "fabric";
+import debounce from "lodash.debounce";
+import React, { useCallback, useEffect, useRef } from "react";
 
-// Editor component definition
-const Editor = () => {
-  // Destructuring init function from useEditor hook
-  const { init } = useEditor();
+type Props = {
+  initialData: FetchProjectResponseType["data"];
+};
 
-  // Creating a reference for the canvas wrapper (HTML div element)
+const Editor = ({ initialData }: Props) => {
+  const { mutate } = usePatchProject(initialData.id);
+
+  // There is no error here. vscode does not understand the type of debounce
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSave = useCallback(
+    debounce((values: { json: string; height: number; width: number }) => {
+      mutate(values);
+    }, 1000),
+    [mutate]
+  );
+
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
-
-  // Creating a reference for the canvas element itself (HTML canvas element)
   const canvasRef = useRef(null);
+  const [selectedTool, setSelectedTool] =
+    React.useState<SelectedTool>("select");
+  const onSelectionClear = useCallback(() => {
+    if (selectionOnlyTools.includes(selectedTool)) {
+      setSelectedTool("select");
+    }
+  }, [selectedTool]);
 
-  // useEffect hook that runs after the component renders
+  const { init, editor } = useEditor({
+    defaultState: initialData.json,
+    defaultWidth: initialData.width,
+    defaultHeight: initialData.height,
+    selectionClearedCallback: onSelectionClear,
+    saveCallback: debouncedSave,
+  });
+
+  // added useCallback because onChangeSelectedTool is a dependency of useEffect
+  const onChangeSelectedTool = useCallback(
+    (tool: SelectedTool) => {
+      if (tool === "draw") {
+        // draw mode
+        editor?.enableDrawingMode();
+      }
+      if (selectedTool === "draw") {
+        // exit draw mode
+        editor?.disableDrawingMode();
+      }
+      if (tool === selectedTool) {
+        return setSelectedTool("select");
+      }
+      setSelectedTool(tool);
+    },
+    [selectedTool, editor]
+  );
+
   useEffect(() => {
-    // Create a new Fabric.js canvas instance when the component is mounted
-    const canvas = new fabric.Canvas(canvasRef.current!, {
-      controlsAboveOverlay: true, // Ensures that object controls (e.g., resize handles) appear above the overlay
-      preserveObjectStacking: true, // Allows objects to stack properly on the canvas without losing order
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      // This will make sure that the controls of the objects are above the overlay
+      controlsAboveOverlay: true,
+      preserveObjectStacking: true,
     });
 
-    // Initialize the canvas and canvas wrapper by passing them to the init function
     init({
-      initialCanvasWrapper: canvasWrapperRef.current!, // The canvas wrapper HTML div
-      initialCanvas: canvas, // The Fabric.js canvas instance
+      initialCanvasWrapper: canvasWrapperRef.current!,
+      initialCanvas: canvas,
     });
-    
-    // Cleanup function that disposes of the canvas when the component is unmounted
-    return () => {
-      canvas.dispose(); // Disposes of the Fabric.js canvas instance to free up memory
-    };
-  }, [init]); // The effect depends on the init function, so it only runs when init changes
 
-  // JSX for rendering the Editor component
+    return () => {
+      canvas.dispose();
+    };
+  }, [init]);
+
   return (
     <div className="h-full flex flex-col">
-      {/* Flex container that takes up the full height */}
-      <div className="h-full flex-1 bg-neutral-800" ref={canvasWrapperRef}>
-        {/* 
-          Canvas resizing is tricky, so a div (canvasWrapperRef) is used to wrap the canvas.
-          A ResizeObserver (from the useAutoResize hook) watches this wrapper for size changes,
-          and the canvas dimensions are updated accordingly.
-        */}
-        <canvas ref={canvasRef} /> {/* Actual canvas element that will be used by Fabric.js */}
+      <Navbar
+        id={initialData.id}
+        selectedTool={selectedTool}
+        onChangeSelectedTool={onChangeSelectedTool}
+        editor={editor}
+      />
+      <div className="flex absolute h-[calc(100%-56px)] w-full top-14">
+        <Sidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+        />
+        <ElementsSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <ColorSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <BorderColorSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <BorderSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <TransparencySidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <TextSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <FontSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <UploadsSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <EditImageSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <AISidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <DrawSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <WorkspaceBackgroundColorSidebar
+          selectedTool={selectedTool}
+          onChangeSelectedTool={onChangeSelectedTool}
+          editor={editor}
+        />
+        <main className="flex relative overflow-auto bg-zinc-900 flex-1 flex-col">
+          <Toolbar
+            editor={editor}
+            selectedTool={selectedTool}
+            onChangeSelectedTool={onChangeSelectedTool}
+            // Hack to re-render toolbar when active object changes
+            key={JSON.stringify(editor?.canvas.getActiveObject())}
+          />
+          <div
+            className="h-[calc(100%-96px)] flex-1 bg-zinc-900"
+            ref={canvasWrapperRef}
+          >
+            {/* Canvas resizing is difficult hence we are using a div as canvasWrapperRef and we will use a resize observer to see if canvasWrapperRef is resized and use the width and height from there to set width and height of canvas */}
+            <canvas ref={canvasRef} />
+          </div>
+          <Footer editor={editor} />
+        </main>
       </div>
     </div>
   );
 };
 
-export default Editor; // Exporting the Editor component for use in other parts of the application
+export default Editor;

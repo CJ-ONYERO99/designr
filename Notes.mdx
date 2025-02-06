@@ -1,0 +1,270 @@
+## CanvasPro AI - Notes
+
+- Similar editor for inspiration:
+  - https://github.com/ikuaitu/vue-fabric-editor built on vue
+
+## Day 1
+
+### 1. Introduction and Project Setup
+
+- `npx create-next-app@latest`
+- install libraries
+  - `shadcn/ui`
+    - https://ui.shadcn.com/
+- to run: `npm run dev`
+
+### 2. Understanding the NextJS project structure
+
+- https://nextjs.org/docs/getting-started/project-structure
+- avoid middleware.ts if possible because it runs only on edge but we want to be able to deploy our app to any server
+- Route Groups:
+  - https://nextjs.org/docs/app/building-your-application/routing/route-groups
+- Private folders:
+  - https://nextjs.org/docs/app/building-your-application/routing/colocation#private-folders
+
+### 3. Fabric.js setup
+
+- http://fabricjs.com/
+- https://github.com/fabricjs/fabric.js
+- http://fabricjs.com/docs/
+- https://github.com/Automattic/node-canvas#compiling
+- Create Editor page, component and useEditor.ts hook
+- why we use canvasContainerRef
+  - Canvas resizing is difficult hence we are using a div as canvasContainerRef and we will use a resize observer to see if canvasContainerRef is resized and use the width and height from there to set width and height of canvas
+- `npm install fabric@5.3.0-browser --save` and `npm install -D @types/fabric@5.3.0`
+  - the browser version is important because it is the only version that will not use node-canvas as dependency
+
+### 4. Make responsive canvas using Resize Observer and add auto zoom
+
+- 🚨 TODO: Fix the canvas flickering issue on resizing
+
+## Day 2
+
+### 5. Deploy to Vercel
+
+### 6. Editor page layout setup
+
+- add components: Navbar, Sidebar, Toolbar, and Footer
+
+### 7. Fix the canvas auto zoom issue
+
+### 8. Improve Navbar component
+
+### 9. Sidebar component
+
+### 10. Select tool on navbar - selected state
+
+## Day 3
+
+### 11. Editor Element Tool - Sidebar
+
+### 12. Add Shapes to Canvas
+
+### 13. Add support for Pentagon and Hexagon, ScrollBar support for ScrollArea
+
+## Day 4
+
+### 14. Add support for fill color
+
+- 🚨 TODO: Fix the color picker related warnings in console
+
+### 15. Fix active object fill color and manage color sidebar visibility
+
+### 16. Add support for stroke color
+
+### 17. Add stroke width tool
+
+### 18. Add support for stroke options
+
+### 19. Layering objects on canvas
+
+### 20. Transparency for object
+
+### 21. Text Sidebar - first draft
+
+## Day 5
+
+### 22. Adjust font sizes for text buttons, toolbar tool visibility based on selected object
+
+### 23. Font family
+
+### 24. Font weight
+
+### 25. Font style - normal, italic
+
+### 26. Underline, linethough, uppercase
+
+### 27. Text alignment - left, center, right, justify
+
+### 28. Font Size
+
+### 29. Delete object
+
+### 30. Hono setup for building APIs
+
+- https://hono.dev/docs/getting-started/basic
+- NextJS: https://hono.dev/docs/getting-started/vercel
+- Does not use file and folder structure like NextJS
+  - hence more scalable than NextJS
+  - It's fast
+  - It integrates well with NextJS
+  - Runs on several runtime environments
+  - we will learn more about RPC routes
+
+## Day 6
+
+### 31. Exploring Hono more in detail and building Photos support with react query, unsplash API
+
+- https://hono.dev/docs/api/routing
+- https://hono.dev/docs/guides/best-practices
+- https://hono.dev/docs/guides/best-practices#building-a-larger-application
+- https://hono.dev/docs/guides/validation
+  - hono has thin minimial validation. so use a third party library for validation like zod
+- https://hono.dev/docs/guides/rpc
+  - don't forget to chain your rpc routes
+    - https://hono.dev/docs/guides/rpc#using-rpc-with-larger-applications
+  - also declare them in a separate variable as `const route =...`
+- https://hono.dev/docs/guides/rpc#client
+- React Query setup with Nextjs
+  - https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#server-components-and-nextjs-app-router
+  - 🚨 TODO: Add RQ DevTools
+- create unsplash dev account for third party images
+  - https://unsplash.com/developers
+
+### 32. Use Bytescale to upload files for our project
+
+### 33. Image Filter
+
+### 34. AI based image generator
+
+- https://replicate.com/docs/
+- Some popular text to image models: flux.1, sdxl etc
+  - `bytedance / sdxl-lightning-4step` is more better than the base stable diffusion model
+  - https://huggingface.co/black-forest-labs/FLUX.1-dev
+
+## Day 7
+
+### 35. Replicate AI based image background removal
+
+### 36. Copy paste image from clipboard
+
+### 37. Lock and Unlock feature for objects
+
+### 38. Draw tool with brush color, brush weight
+
+### 39. Canvas resize / custom size tool, canvas workspace background color
+
+### 40. Zoom in, zoom out
+
+### 41. Undo and Redo - Editor history
+
+### 42. Shortcuts and hotkeys - Suggested by Shah Zaman
+
+### 43. Export and Import
+
+## Day 8
+
+### 44. Auth setup with Auth.js
+
+- Note: NextAuth v4 is now called as Auth.js which is v5 so make sure you are on the correct website
+- https://authjs.dev/ ✅ v5 - we will be using this
+- https://next-auth.js.org/ ❌ v4
+
+- 1. Setup:
+
+  - Installation: https://authjs.dev/getting-started/installation?framework=Next.js
+  - Do the setup and test by visiting the url: http://localhost:3000/api/auth/providers to see if providers is empty and working fine
+
+- 2. Authentication:
+
+  - OAuth with Github
+  - Test: http://localhost:3000/api/auth/providers and http://localhost:3000/api/auth/signin and http://localhost:3000/api/auth/signout
+
+### 45. Postgresql DB with neon connector and Drizzle Setup with Auth.js
+
+- https://neon.tech/
+- Drizzle orm setup
+  - https://orm.drizzle.team/docs/connect-neon
+- https://authjs.dev/getting-started/adapters/drizzle
+- https://authjs.dev/getting-started/adapters/drizzle#schemas
+
+### 46. Build Auth Pages UI and add Google OAuth
+
+- build login, logout(temporary) and register pages
+- google oauth:
+  - https://console.cloud.google.com/
+  - create a project -> apis and services -> oauth consent screen -> Choose External --> Click Create -> Save
+  - Credentials --> OAuth Client ID --> Web Application --> Name: CanvasPro --> Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
+
+### 47. Credentials Auth with Auth.js
+
+- https://authjs.dev/getting-started/authentication/credentials
+- For google and github we have used db session strategy but for credentials we will use jwt strategy
+- db session strategy will create sessions with user id while jwt strategy sessions will not have an id. In order to add id follow this: https://authjs.dev/guides/extending-the-session
+- make sure to add password to the user schema so that it is saved in db.
+- `npm run db:generate`
+- `npm run db:migrate`
+- `npm run db:studio`
+
+- Note: Better to avoid credentials provider and stick to OAuth providers, magic link etc. And if that's the case, then we can use the db session strategy for all providers and get rid of jwt strategy
+
+## Day 9
+
+### 48. Adding auth for hono API
+
+- create a test.ts route to make it protected route
+- https://hono.dev/docs/middleware/third-party
+- https://github.com/honojs/middleware/tree/main/packages/auth-js
+- `npm i @hono/auth-js @auth/core`
+
+### 49. Profile dropdown with Logout feature
+
+- https://authjs.dev/getting-started/session-management/login?framework=sveltekit#client-side
+- Get Session
+  - https://authjs.dev/getting-started/session-management/get-session
+
+### 50. Home Page
+
+- primary, secondary sidebars and main content area
+
+### 51. Projects BE schema and API
+
+- Create Schema for Projects
+  - https://orm.drizzle.team/docs/rqb#foreign-keys
+    - explains why relations and foreign keys are used in drizzle
+  - generate and apply migration
+- Create an API for project creation
+
+## Day 10
+
+### 52. Fetch Project/design API
+
+### 53. Save Project/design API
+
+- patch method
+
+### 54. Recent Designs or Projects, Infinite Scroll with useInfiniteQuery, open in new tab, copy and delete design
+
+- https://tanstack.com/query/v4/docs/framework/react/reference/useInfiniteQuery
+
+### 55. Mark design as template, Create templates page
+
+- TODO: 🚨 Bug: Generate AI image and ai bg remover is not working
+
+### 56. SAAS Implementation - UI with Zustand
+
+- Important: zustand is a client side state management library and if the component controlled by zustand are rendered on server side then it will cause some hydration issues. So make sure to use zustand only on client side. Also note that "use client" will not make sure that the component is not rendered on server side
+
+### 57. SAAS Implementation - BE with Stripe
+
+- Stripe - create account --> create business ---> Get api key ---> Create product ---> ex: monthly subscription with recurring billing --> after creating product get into pricing section and find pricing id.
+- https://dashboard.stripe.com/test/workbench/webhooks
+- https://docs.stripe.com/stripe-cli
+- https://docs.stripe.com/webhooks#test-webhook
+- `stripe listen --forward-to localhost:3000/api/subscriptions/webhook` - pls do not close this for the testing purpose
+- `stripe trigger payment_intent.succeeded`
+- test card: 4242 4242 4242 4242
+- Make customer portal for test active: https://dashboard.stripe.com/test/settings/billing/portal
+- Create a webhook endpoint for prod
+
+- Note: We are not using Image tag from next js beause I am currently using the free tier which has limit on the image optimization. If you have a paid plan then you can use the Image tag from next js which is recommended

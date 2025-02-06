@@ -1,114 +1,108 @@
-import {fabric} from 'fabric'; // Importing the entire 'fabric' library for working with the canvas
-import { useCallback, useEffect } from 'react'; // Importing React hooks: useCallback and useEffect
+import { fabric } from "fabric";
+import { useCallback, useEffect } from "react";
 
-// Defining the types for the props passed into the hook
 type UseAutoResizeProps = {
-    canvasWrapper: HTMLDivElement | null; // The HTML element wrapping the canvas (could be null)
-    canvas: fabric.Canvas | null; // The Fabric.js canvas instance (could be null)
+  canvasWrapper: HTMLDivElement | null;
+  canvas: fabric.Canvas | null;
 };
 
-// Main custom hook: useAutoResize
-const useAutoResize = ({ canvasWrapper, canvas }: UseAutoResizeProps): void => {
-    // autoZoom function handles the resizing of the canvas and workspace scaling
-    const autoZoom = useCallback(() => {
-        // If either the canvasWrapper or canvas are null, exit the function
-        if (!canvasWrapper || !canvas) return;
+const useAutoResize = ({ canvasWrapper, canvas }: UseAutoResizeProps) => {
+  // autozoom function takes care of resizing the canvas and workspace
+  const autoZoom = useCallback(() => {
+    // Ensure canvasWrapper and canvas are available before proceeding
+    if (!canvasWrapper || !canvas) return;
 
-        // Destructuring the width and height from the canvasWrapper's offset (visible size of the element)
-        const { offsetWidth, offsetHeight } = canvasWrapper;
+    // Get the width and height of the canvas wrapper (container) and adjust the canvas size accordingly
+    const { offsetWidth, offsetHeight } = canvasWrapper;
+    canvas.setHeight(offsetHeight);
+    canvas.setWidth(offsetWidth);
 
-        // Setting the canvas' height and width to match the size of the canvasWrapper
-        canvas.setHeight(offsetHeight);
-        canvas.setWidth(offsetWidth);
+    // Get the center point of the canvas (this is used for zooming)
+    const center = canvas.getCenter();
 
-        // Getting the center point of the canvas (used for zooming)
-        const center = canvas.getCenter();
-        const zoomRatio = 0.8; // Predefined zoom ratio to scale the workspace down
+    // Set a zoom ratio (in this case, 80%)
+    const zoomRatio = 0.8;
 
-        // Finding the workspace object inside the canvas using its name 'defaultCanvasWorkspace'
-        const workspace = canvas.getObjects().find((obj) => obj.name === "defaultCanvasWorkspace");
-        // If no workspace is found, return early
-        if (!workspace) return;
+    // Find the workspace object by its name on the canvas, e.g., "defaultCanvasWorkspace"
+    const workspace = canvas
+      .getObjects()
+      .find((obj) => obj.name === "defaultCanvasWorkspace");
 
-        // Calculate the scale needed to fit the workspace within the canvas dimensions
-        // @ts-expect-error: findScaleToFit is not in the TypeScript definitions
-        const scale = fabric.util.findScaleToFit(workspace, {
-            width: offsetWidth, // Width of the canvas wrapper
-            height: offsetHeight, // Height of the canvas wrapper
-        });
+    // If no workspace is found, return early
+    if (!workspace) return;
 
-        // Final zoom is the calculated scale multiplied by the zoom ratio (80% of the full scale)
-        const zoom = zoomRatio * scale;
+    // Calculate the scale needed to fit the workspace within the canvas dimensions
+    // @ts-expect-error: findScaleToFit is not in the TypeScript definitions
+    const scale = fabric.util.findScaleToFit(workspace, {
+      width: offsetWidth,
+      height: offsetHeight,
+    });
 
-        // Resetting the viewport transformation of the canvas to the identity matrix (no transformations)
-        canvas.setViewportTransform(fabric.iMatrix.concat());
+    // Apply the zoom ratio to the calculated scale
+    const zoom = zoomRatio * scale;
 
-        // Zoom to a specific point on the canvas (the center) with the calculated zoom level
-        canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
+    // Reset any existing viewport transformations to the default identity matrix
+    canvas.setViewportTransform(fabric.iMatrix.concat());
 
-        // If no workspace object was found, stop the function here
-        if (!workspace) return;
+    // Zoom the canvas to the calculated zoom level, centering it around the canvas's center point
+    canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
 
-        // Get the center point of the workspace object inside the canvas
-        const workspaceCenter = workspace.getCenterPoint();
+    if (!workspace) return;
+    // Get the center point of the workspace
+    const workspaceCenter = workspace.getCenterPoint();
 
-        // Get the current viewport transformation of the canvas (transformation matrix)
-        const viewportTransform = canvas.viewportTransform;
+    // Access the current viewport transformation matrix of the canvas
+    const viewportTransform = canvas.viewportTransform;
 
-        // Check if canvas dimensions or viewport transformation are missing, and return if so
-        // === undefined is used for safety in case values are 0 (which are valid but falsy)
-        if (canvas.width === undefined || canvas.height === undefined || !viewportTransform) return;
+    // Ensure the canvas has valid dimensions and viewport transformation before proceeding
+    if (
+      canvas.width === undefined ||
+      canvas.height === undefined ||
+      !viewportTransform
+    )
+      return;
 
-        // Update the viewport's x-translation to center the workspace horizontally
-        // The calculation adjusts the canvas to ensure that the workspace is centered based on its width and the current zoom level
-        viewportTransform[4] = canvas.width / 2 - workspaceCenter.x * viewportTransform[0];
+    // viewportTransform[0] and viewportTransform[3]: Scaling factors for X and Y axes
+    // viewportTransform[4] and viewportTransform[5]: Translation (movement) values for X and Y axes.
+    // Adjust the X translation (viewportTransform[4]) so that the workspace's center aligns with the canvas's center horizontally
+    // Translation in the X direction (viewportTransform[4])
+    // canvas.width / 2: This gives the horizontal center of the canvas.
+    // workspaceCenter.x * viewportTransform[0]: The workspaceCenter.x is the X-coordinate of the center of the workspace. Multiplying it by viewportTransform[0] (which is the current scale factor for the X-axis) gives the scaled position of the workspace's center in the X direction.
+    // canvas.width / 2 - workspaceCenter.x * viewportTransform[0]: This shifts the workspace such that its center is aligned with the horizontal center of the canvas. The difference between the canvas's center and the workspace's center (scaled) becomes the translation value for the X-axis, which is assigned to viewportTransform[4] (the translation component in the X direction).
+    viewportTransform[4] =
+      canvas.width / 2 - workspaceCenter.x * viewportTransform[0];
 
-        // Update the viewport's y-translation to center the workspace vertically
-        viewportTransform[5] = canvas.height / 2 - workspaceCenter.y * viewportTransform[3];
+    // Adjust the Y translation (viewportTransform[5]) so that the workspace's center aligns with the canvas's center vertically
+    viewportTransform[5] =
+      canvas.height / 2 - workspaceCenter.y * viewportTransform[3];
 
-        // Apply the new viewport transformation with the updated translation values
-        canvas.setViewportTransform(viewportTransform);
+    // Apply the updated viewport transformation matrix to the canvas
+    canvas.setViewportTransform(viewportTransform);
 
-        // Clone the workspace object (fabric.Rect) and use the clone as the clipping path for the canvas
-        // This ensures that only the area within the workspace is visible on the canvas
-        workspace.clone((clonedWorkspace: fabric.Rect) => {
-            // Set the clip path of the canvas to the cloned workspace
-            canvas.clipPath = clonedWorkspace;
+    // Clone the workspace object and use it as the clipping path to ensure that content outside the workspace is hidden
+    workspace.clone((clonedWorkspace: fabric.Rect) => {
+      // Set the canvas's clip path to the cloned workspace
+      canvas.clipPath = clonedWorkspace;
+      // Request re-render of the canvas to apply all changes
+      canvas.requestRenderAll();
+    });
+  }, [canvasWrapper, canvas]);
 
-            // Request a full render of the canvas with the updated clip path
-            canvas.requestRenderAll();
-        });
+  useEffect(() => {
+    let resizeObserver: ResizeObserver | null = null;
 
-    }, [canvasWrapper, canvas]); // Dependency array for useCallback ensures that autoZoom only changes if these values change
+    if (canvasWrapper && canvas) {
+      resizeObserver = new ResizeObserver(() => {
+        console.log("Resizing...");
+        autoZoom();
+      });
 
-    // useEffect hook that sets up a ResizeObserver to watch for changes in the canvasWrapper's size
-    useEffect(() => {
-        let resizeObserver: ResizeObserver | null = null; // Declare a ResizeObserver variable
+      // Start observing the canvasWrapper
+      resizeObserver.observe(canvasWrapper);
+    }
+  }, [canvasWrapper, canvas, autoZoom]);
 
-        // If both the canvasWrapper and canvas exist, set up the observer
-        if (canvasWrapper && canvas) {
-            // Initialize the ResizeObserver, which will watch for resizing of the canvasWrapper element
-            resizeObserver = new ResizeObserver(() => {
-                // Log to the console when a resize is detected
-                console.log('Resizing... ');
+  return { autoZoom };
+};
 
-                // Call autoZoom whenever the size changes
-                autoZoom();
-            });
-
-            // Start observing the canvasWrapper for any size changes
-            resizeObserver.observe(canvasWrapper);
-        }
-
-        // Cleanup function that disconnects the observer when the component is unmounted or dependencies change
-        return () => {
-            // If the observer is still active, disconnect it to stop observing
-            if (resizeObserver) {
-                resizeObserver.disconnect();
-            }
-        };
-
-    }, [canvasWrapper, canvas, autoZoom]); // Dependency array for useEffect ensures it only runs when these values change
-}
-
-export { useAutoResize }; // Export the custom hook for use in other components
+export { useAutoResize };
