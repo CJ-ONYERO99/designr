@@ -21,7 +21,9 @@ const nextConfig = {
     return config;
   },
   experimental: {
-    outputFileTracingRoot: process.env.NODE_ENV === "development" ? "./" : "/vercel/path0",
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'https://designr-git-main-orionthehunters-projects.vercel.app/']
+    }
   }
 };
 
