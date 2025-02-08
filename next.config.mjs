@@ -21,6 +21,9 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
+  experimental: {
+    outputFileTracingRoot: process.env.NODE_ENV === "development" ? "./" : "/vercel/path0",
+  }
 };
 
 export default nextConfig;
