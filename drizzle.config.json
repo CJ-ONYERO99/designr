@@ -1,0 +1,4 @@
+{
+  "configPath": "./drizzle.config.ts",
+  "migrationsFolder": "./drizzle"
+} 
