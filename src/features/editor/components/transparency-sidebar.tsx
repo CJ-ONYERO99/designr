@@ -20,11 +20,11 @@ const TransparencySidebar = ({
 }: Props) => {
   const initialOpacity = editor?.getActiveObjectOpacity() ?? OPACITY;
   const [opacity, setOpacity] = React.useState(initialOpacity);
-  // Memoizing a dependency of another Hook - useEffect
-  // https://react.dev/reference/react/useMemo
+  
+  // Fix the useMemo hook
   const selectedObject = useMemo(
-    () => editor?.selectedObjects[0],
-    [editor?.selectedObjects[0]]
+    () => editor?.selectedObjects?.[0],
+    [editor?.selectedObjects]
   );
 
   const onChange = (opacity: number) => {

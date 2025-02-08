@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useCreateProject } from "@/features/projects/api/use-create-project";
@@ -13,14 +13,15 @@ import { useDuplicateProject } from "@/features/projects/api/use-duplicate-proje
 import { useFetchTemplates } from "@/features/projects/api/use-fetch-templates";
 import { usePaywall } from "@/features/subscription/hooks/use-paywall";
 import {
-  BadgeHelp,
-  CircleAlert,
-  Crown,
-  Ellipsis,
-  File,
-  LoaderPinwheel,
-  SquarePen,
+    BadgeHelp,
+    CircleAlert,
+    Crown,
+    Ellipsis,
+    File,
+    LoaderPinwheel,
+    SquarePen,
 } from "lucide-react";
+import Image from 'next/image';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -129,7 +130,7 @@ const RecentTemplates = () => {
                   <TableCell>
                     {project.thumbnailUrl && (
                       <div className="relative size-14">
-                        <img
+                        <Image
                           width={56}
                           height={56}
                           src={project.thumbnailUrl}

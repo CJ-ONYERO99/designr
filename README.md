@@ -191,9 +191,3 @@ I plan to continue refining features, addressing issues (like canvas flickering 
 ## License
 
 This project is for personal use and learning. (Include a proper license if I decide to open-source it.)
-
----
-
-Feel free to reach out if you have any suggestions or improvements. Enjoy exploring Designr!
-
----
