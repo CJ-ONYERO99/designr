@@ -1,6 +1,6 @@
-import HomeNavbar from "@/app/home/home-navbar";
-import HomeSidebarPrimary from "@/app/home/home-sidebar-primary";
-import HomeSidebarSecondary from "@/app/home/home-sidebar-secondary";
+import HomeNavbar from "@/app/(home)/home-navbar";
+import HomeSidebarPrimary from "@/app/(home)/home-sidebar-primary";
+import HomeSidebarSecondary from "@/app/(home)/home-sidebar-secondary";
 
 export default async function HomeLayout({
   children,
