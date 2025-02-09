@@ -2,9 +2,6 @@ import HomeBanner from "@/app/(home)/home-banner";
 import RecentDesigns from "@/app/(home)/recent-designs";
 import { protectRoute } from "@/features/auth/utils";
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
 export default async function Home() {
   await protectRoute();
   return (
